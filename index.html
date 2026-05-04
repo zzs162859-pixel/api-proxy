@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student AI API Proxy — AI APIs at a Fair Price</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --bg: #f5f5f7;
+            --surface: rgba(255,255,255,0.72);
+            --surface-solid: #ffffff;
+            --text: #1d1d1f;
+            --text-secondary: #86868b;
+            --text-tertiary: #aeaeb2;
+            --border: rgba(0,0,0,0.06);
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.06);
+            --shadow-lg: 0 12px 40px rgba(0,0,0,0.08);
+            --radius-md: 20px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: radial-gradient(ellipse at 50% 0%, rgba(0,0,0,0.02) 0%, transparent 70%),
+                        radial-gradient(ellipse at 80% 100%, rgba(0,0,0,0.015) 0%, transparent 60%);
+            pointer-events: none; z-index: 0;
+        }
+
+        .container { position: relative; z-index: 1; max-width: 960px; margin: 0 auto; padding: 60px 24px 40px; }
+
+        /* 导航 */
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; margin-bottom: 80px; }
+        .logo { font-size: 1.1em; font-weight: 600; letter-spacing: -0.02em; }
+        .nav-links { display: flex; gap: 28px; list-style: none; }
+        .nav-links a { text-decoration: none; color: var(--text-secondary); font-size: 0.9em; font-weight: 450; transition: color 0.2s; }
+        .nav-links a:hover { color: var(--text); }
+
+        /* Hero */
+        .hero { text-align: center; margin-bottom: 120px; padding-top: 20px; }
+        .hero .tag { display: inline-block; font-size: 0.8em; font-weight: 500; color: var(--text-secondary); background: var(--surface-solid); border: 1px solid var(--border); padding: 6px 16px; border-radius: 100px; margin-bottom: 28px; backdrop-filter: blur(20px); }
+        .hero h1 { font-size: clamp(3.2em, 7vw, 5em); font-weight: 300; letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 24px; color: #1d1d1f; white-space: nowrap; }
+        .hero h1 strong { font-weight: 600; }
+        .hero p { font-size: 1.1em; color: #86868b; max-width: 460px; margin: 0 auto 40px; font-weight: 400; line-height: 1.55; }
+        .hero .cta-group { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
+        /* 按钮 */
+        .btn { display: inline-block; padding: 14px 28px; border-radius: 100px; font-weight: 500; font-size: 0.95em; text-decoration: none; cursor: pointer; transition: all 0.2s; border: none; font-family: inherit; }
+        .btn-primary { background: #1d1d1f; color: #fff; }
+        .btn-primary:hover { background: #3a3a3c; transform: translateY(-1px); box-shadow: var(--shadow-md); }
+        .btn-secondary { background: var(--surface-solid); color: var(--text); border: 1px solid #d2d2d7; }
+        .btn-secondary:hover { background: #f0f0f2; border-color: #c0c0c4; }
+
+        /* 区块 */
+        section { margin-bottom: 100px; }
+        .section-label { font-size: 0.75em; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-tertiary); margin-bottom: 16px; }
+        .section-title { font-size: 2em; font-weight: 500; letter-spacing: -0.02em; margin-bottom: 12px; }
+        .section-desc { font-size: 1em; color: var(--text-secondary); max-width: 480px; margin-bottom: 40px; }
+
+        /* 卡片 */
+        .card { background: var(--surface); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 32px; box-shadow: var(--shadow-sm); }
+
+        /* 定价 */
+        .pricing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .pricing-card { text-align: center; padding: 40px 28px; }
+        .pricing-card.featured { background: var(--surface-solid); border: 1px solid #d0d0d5; box-shadow: var(--shadow-lg); }
+        .plan-name { font-size: 0.85em; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-tertiary); margin-bottom: 20px; }
+        .price { font-size: 3em; font-weight: 300; letter-spacing: -0.03em; margin-bottom: 4px; }
+        .price span { font-size: 0.35em; color: var(--text-tertiary); font-weight: 400; }
+        .original-price { text-decoration: line-through; color: #c0c0c4; font-size: 0.95em; margin-bottom: 20px; }
+        .feature-list { list-style: none; text-align: left; max-width: 220px; margin: 0 auto 28px; }
+        .feature-list li { padding: 5px 0; font-size: 0.9em; color: var(--text-secondary); }
+        .feature-list li::before { content: "—"; color: #c0c0c4; margin-right: 8px; }
+
+        /* 对比表格 */
+        .comparison-table { width: 100%; border-collapse: collapse; }
+        .comparison-table th, .comparison-table td { text-align: left; padding: 14px 20px; font-size: 0.9em; }
+        .comparison-table th { font-weight: 500; color: var(--text); border-bottom: 1px solid var(--border); }
+        .comparison-table td { color: var(--text-secondary); border-bottom: 1px solid rgba(0,0,0,0.04); }
+        .comparison-table .highlight { font-weight: 600; color: var(--text); }
+
+        /* FAQ */
+        .faq-list { display: flex; flex-direction: column; gap: 12px; }
+        .faq-item { padding: 20px 24px; cursor: default; }
+        .faq-item h3 { font-size: 1em; font-weight: 550; margin-bottom: 6px; }
+        .faq-item p { font-size: 0.9em; color: var(--text-secondary); }
+
+        /* 关于 */
+        .about-content { text-align: center; max-width: 480px; margin: 0 auto; }
+        .about-content p { color: var(--text-secondary); margin-bottom: 12px; }
+
+        /* 联系方式 */
+        .contact-links { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; margin-top: 16px; }
+        .contact-links a { text-decoration: none; color: var(--text-secondary); font-size: 0.9em; font-weight: 450; transition: color 0.2s; padding: 8px 16px; background: var(--surface-solid); border: 1px solid var(--border); border-radius: 100px; }
+        .contact-links a:hover { color: var(--text); border-color: #c0c0c4; }
+
+        footer { text-align: center; padding: 40px 0; color: var(--text-tertiary); font-size: 0.8em; border-top: 1px solid var(--border); margin-top: 40px; }
+
+        @media (max-width: 768px) {
+            .pricing-grid { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 2em; white-space: normal; }
+            .section-title { font-size: 1.5em; }
+            nav { flex-direction: column; gap: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 导航 -->
+        <nav>
+            <div class="logo">Student AI Proxy</div>
+            <ul class="nav-links">
+                <li><a href="#pricing">Pricing</a></li>
+                <li><a href="#compare">Compare</a></li>
+                <li><a href="#faq">FAQ</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+
+        <!-- Hero -->
+        <header class="hero">
+            <div class="tag">✦ Now in public beta</div>
+            <h1>AI APIs, finally at a <strong>fair price.</strong></h1>
+            <p>One flat subscription. All the performance you need.<br>No brand tax. No per-token anxiety.</p>
+            <div class="cta-group">
+                <a href="#pricing" class="btn btn-primary">View Plans</a>
+                <a href="chat.html" class="btn btn-secondary">Try AI Chat Now</a>
+            </div>
+        </header>
+
+        <!-- 定价 -->
+        <section id="pricing">
+            <p class="section-label">Pricing</p>
+            <h2 class="section-title">One plan. Everything you need.</h2>
+            <p class="section-desc">No per-token anxiety. No surprise bills. Just a flat monthly price that makes sense.</p>
+            <div class="pricing-grid">
+                <div class="card pricing-card">
+                    <div class="plan-name">Trial</div>
+                    <div class="price">Free</div>
+                    <ul class="feature-list">
+                        <li>10 test calls</li>
+                        <li>All models included</li>
+                        <li>7-day access</li>
+                    </ul>
+                    <a href="chat.html" class="btn btn-secondary" style="width:100%">Try Free Chat</a>
+                </div>
+                <div class="card pricing-card featured">
+                    <div class="plan-name">Builder Plan</div>
+                    <div class="original-price">$20.00</div>
+                    <div class="price">$4.99<span>/mo</span></div>
+                    <ul class="feature-list">
+                        <li>Unlimited use, all models</li>
+                        <li>Full speed access</li>
+                        <li>OpenAI-compatible</li>
+                        <li>Cancel anytime</li>
+                        <li>24-hour refund</li>
+                    </ul>
+                    <a href="pay.html" class="btn btn-primary" style="width:100%">Subscribe</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 对比 -->
+        <section id="compare">
+            <p class="section-label">Compare</p>
+            <h2 class="section-title">Price vs Performance.</h2>
+            <p class="section-desc">We benchmarked. We compared. Then we built the affordable alternative.</p>
+            <div class="card">
+                <table class="comparison-table">
+                    <thead>
+                        <tr><th>Task</th><th>Market Avg</th><th>Our Price</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Coding tasks</td><td>$15–30/month</td><td class="highlight">$4.99/month</td></tr>
+                        <tr><td>Writing & editing</td><td>$10–25/month</td><td class="highlight">$4.99/month</td></tr>
+                        <tr><td>General reasoning</td><td>$12–28/month</td><td class="highlight">$4.99/month</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- FAQ -->
+        <section id="faq">
+            <p class="section-label">FAQ</p>
+            <h2 class="section-title">Questions, answered.</h2>
+            <div class="faq-list">
+                <div class="card faq-item">
+                    <h3>What models do you offer?</h3>
+                    <p>Models that match or outperform mainstream options on coding, writing, and reasoning — at a fraction of the cost.</p>
+                </div>
+                <div class="card faq-item">
+                    <h3>Is it compatible with my existing code?</h3>
+                    <p>Yes. Fully OpenAI-compatible. Keep your code, swap the base URL, and it just works.</p>
+                </div>
+                <div class="card faq-item">
+                    <h3>Refund policy?</h3>
+                    <p>24 hours, no questions asked. Just reach out via any contact channel below.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 联系 -->
+        <section id="contact">
+            <p class="section-label">Contact</p>
+            <h2 class="section-title">Get in touch.</h2>
+            <p class="section-desc">Questions, custom plans, or just want to say hi — reach out on any platform.</p>
+            <div class="contact-links">
+                <a href="https://t.me/Csen_ai" target="_blank">Telegram: @Csen_ai</a>
+                <a href="mailto:zzs162859@gmail.com">Gmail</a>
+                <a href="https://discord.com/users/Csen_ai" target="_blank">Discord: @Csen_ai</a>
+                <a href="https://x.com/zzs1221086" target="_blank">X: @zzs1221086</a>
+            </div>
+        </section>
+
+        <!-- 关于 -->
+        <section>
+            <p class="section-label">About</p>
+            <div class="about-content">
+                <p>A student running this solo. Building tools to pay for textbooks.</p>
+                <p>If this saves you money, your support keeps me going. ❤️</p>
+            </div>
+        </section>
+
+        <footer>
+            © 2026 Student AI Proxy. Fair prices for builders.
+        </footer>
+    </div>
+</body>
+</html>
